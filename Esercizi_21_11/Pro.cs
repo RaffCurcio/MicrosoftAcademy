@@ -1,5 +1,5 @@
 using System.Reflection.Metadata.Ecma335;
-
+/*
 class Test
 {
     static void StampaArray()
@@ -178,4 +178,4 @@ class Test
             }
         }while(exit != 7);
     }
-}
+}*/
