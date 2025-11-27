@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using GestioneStudenti.Model;
 using GestioneStudenti.View;
+using GestioneStudenti.Repository;
 
 namespace GestioneStudenti.Controller
 {
     public class StudenteController
     {
-        private List<Studente> studenti = new List<Studente>();
+        private StudenteRepository repository;
+
+        public StudenteController(StudenteRepository repository)
+        {
+            this.repository = repository;
+        }
 
         public void Run()
         {
@@ -56,15 +62,14 @@ namespace GestioneStudenti.Controller
             string matricola = ConsoleView.LeggiInput("Matricola: ");
 
             Studente s = new Studente(nome, cognome, matricola, new List<int>());
-            studenti.Add(s);
+            repository.Aggiungi(s);
             ConsoleView.Stampa("Studente aggiunto con successo!");
         }
 
         private void CercaStudente()
         {
             string mat = ConsoleView.LeggiInput("Inserisci matricola: ");
-
-            Studente s = studenti.FirstOrDefault(x => x.getMatricola == mat);
+            Studente s = repository.TrovaPerMatricola(mat);
 
             if (s == null)
             {
@@ -79,7 +84,7 @@ namespace GestioneStudenti.Controller
         private void AggiungiVoto()
         {
             string mat = ConsoleView.LeggiInput("Matricola: ");
-            Studente s = studenti.FirstOrDefault(x => x.getMatricola == mat);
+            Studente s = repository.TrovaPerMatricola(mat);
 
             if (s == null)
             {
@@ -87,13 +92,15 @@ namespace GestioneStudenti.Controller
                 return;
             }
 
-            int voto = int.Parse(ConsoleView.LeggiInput("Inserisci voto (18–30): "));
+            int voto = int.Parse(ConsoleView.LeggiInput("Inserisci voto (18-30): "));
             s.AggiungiVoto(voto);
             ConsoleView.Stampa("Voto aggiunto!");
         }
 
         private void VisualizzaTutti()
         {
+            var studenti = repository.OttieniTutti();
+            
             if (studenti.Count == 0)
             {
                 ConsoleView.Stampa("Nessuno studente presente.");
@@ -107,6 +114,8 @@ namespace GestioneStudenti.Controller
 
         private void TrovaStudenteConMediaPiuAlta()
         {
+            var studenti = repository.OttieniTutti();
+            
             if (studenti.Count == 0)
             {
                 ConsoleView.Stampa("Non ci sono studenti.");
@@ -120,7 +129,7 @@ namespace GestioneStudenti.Controller
         private void MostraLibretto()
         {
             string mat = ConsoleView.LeggiInput("Matricola: ");
-            Studente s = studenti.FirstOrDefault(x => x.getMatricola == mat);
+            Studente s = repository.TrovaPerMatricola(mat);
 
             if (s == null)
             {
