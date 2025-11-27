@@ -1,0 +1,30 @@
+//dichiarazione lista
+List<int> votiList = new List<int>();
+
+//ricerca nella lista
+votiList.Find(x => x > 25);
+
+//Dichiarazione dizionario
+Dictionary<string, Studente> dizStudenti = new Dictionary<string, Studente>();
+
+//Aggiunta elementi al dizionario
+Studente mario = new Studente("Mario", "Rossi", "MAT001");
+dizStudenti.Add("MAT001", mario);
+
+//Ricerca elemento nel dizionario
+Studente s = dizStudenti["MAT001"];
+
+//Alternativa con TryGetValue che evita eccezioni
+if (dizStudenti.TryGetValue("MAT001", out Studente risultato))
+
+//iterare dizionario
+foreach (KeyValuePair<string, Studente> coppia in dizStudenti){
+    Console.WriteLine($"Matricola: {coppia.Key}, Nome: {coppia.Value}");
+}
+
+//elementi del dizionario
+var chiavi = dizStudenti.Keys;
+var valori = dizStudenti.Values;
+
+//contare elementi del dizionario
+int numeroElementi = dizStudenti.Count;
