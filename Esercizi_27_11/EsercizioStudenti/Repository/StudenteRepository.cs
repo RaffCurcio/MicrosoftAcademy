@@ -20,7 +20,7 @@ namespace GestioneStudenti.Repository
         {
             foreach (var studente in studenti)
             {
-                if (studente.getMatricola == matricola)
+                if (studente.Matricola == matricola)
                     return studente;
             }
             return null;
@@ -45,6 +45,11 @@ namespace GestioneStudenti.Repository
         public int ContaTotale()
         {
             return studenti.Count;
+        }
+
+        public List<Studente> TrovaPerCorso(string codiceCorso)
+        {
+            return studenti.Where(s => s.CorsoLaurea != null && s.CorsoLaurea.Codice == codiceCorso).ToList();
         }
     }
 }

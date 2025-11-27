@@ -5,10 +5,12 @@ class Program
 {
     static void Main(string[] args)
     {
-        StudenteRepository repository = new StudenteRepository();
-
-        StudenteController controller = new StudenteController(repository);
-
+        StudenteRepository studenteRepo = new StudenteRepository();
+        ProfessoreRepository professoreRepo = new ProfessoreRepository();
+        CorsoLaureaRepository corsoRepo = new CorsoLaureaRepository();
+        
+        MainController controller = new MainController(studenteRepo, professoreRepo, corsoRepo);
+        
         controller.Run();
     }
 }
