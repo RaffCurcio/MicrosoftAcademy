@@ -1,0 +1,35 @@
+Esempi di collezioni generiche in C#
+
+- Liste generiche (List<T>)
+
+List<int> persone = new List<int>();
+List<Persona> persone = new List<Persona>();
+List<Dipendente> dipendenti = new List<Dipendente>();
+
+List<String> nomi = new List<String>();
+nomi.Add("Mario");
+nomi.Add("Luigi");
+nomi.Add("Anna");
+
+foreach (String nome in nomi)
+{
+    Console.WriteLine(nome);
+}
+
+
+
+
+- Dizionari generici (Dictionary<TKey, TValue>)
+
+Dictionary<int, string> studenti = new Dictionary<int, string>();
+studenti.Add(101, "Mario Rossi");
+studenti.Add(102, "Luigi Bianchi");
+
+//lettura
+Console.WriteLine(studenti[101]);   // Output: Mario Rossi
+
+//cercare una chiave
+if (studenti.ContainsKey(102))
+{
+    Console.WriteLine("Studente trovato: " + studenti[102]);
+}
