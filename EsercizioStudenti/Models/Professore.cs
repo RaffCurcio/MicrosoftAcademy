@@ -1,8 +1,9 @@
 using System;
+using GestioneStudenti.Interfaces;
 
 namespace GestioneStudenti.Model
 {
-    public class Professore
+    public class Professore : IEntita
     {
         private string nome;
         private string cognome;
@@ -18,6 +19,11 @@ namespace GestioneStudenti.Model
         }
 
         public string CodiceId
+        {
+            get { return codiceId; }
+        }
+
+        public string Id
         {
             get { return codiceId; }
         }

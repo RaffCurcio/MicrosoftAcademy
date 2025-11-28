@@ -12,7 +12,8 @@ namespace GestioneStudenti.View
             Console.WriteLine("1. Gestione Studenti");
             Console.WriteLine("2. Gestione Professori");
             Console.WriteLine("3. Gestione Corsi di Laurea");
-            Console.WriteLine("4. Esci");
+            Console.WriteLine("4. Gestione Amministrativo");
+            Console.WriteLine("5. Esci");
             Console.Write("\nScegli un'opzione: ");
         }
 
@@ -48,6 +49,18 @@ namespace GestioneStudenti.View
             Console.WriteLine("3. Visualizza tutti i corsi");
             Console.WriteLine("4. Visualizza dettagli corso");
             Console.WriteLine("5. Visualizza studenti per corso");
+            Console.WriteLine("0. Indietro");
+            Console.Write("\nScegli un'opzione: ");
+        }
+
+        public static void MostraMenuAmministrativo()
+        {
+            Console.WriteLine("\n========== MENU AMMINISTRATIVO ==========");
+            Console.WriteLine("1. Richieste iscrizione studenti");
+            Console.WriteLine("2. Approva prossima richiesta");
+            Console.WriteLine("3. Visualizza prossimo studente in coda");
+            Console.WriteLine("4. Visualizza storico operazioni");
+            Console.WriteLine("5. Visualizza numero richieste in coda");
             Console.WriteLine("0. Indietro");
             Console.Write("\nScegli un'opzione: ");
         }

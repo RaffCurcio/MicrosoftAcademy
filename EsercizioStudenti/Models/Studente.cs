@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GestioneStudenti.Interfaces;
 
 namespace GestioneStudenti.Model
 {
-    public class Studente
+    public class Studente: IComparable<Studente>, IEntita
     {
         private string nome;
         private string cognome;
         private string matricola;
         private List<Voto> voti;
-        private CorsoLaurea corsoLaurea; // Relazione: uno studente è iscritto a UN solo corso
+        private CorsoLaurea corsoLaurea;
 
         public Studente(string nome, string cognome, string matricola)
         {
@@ -22,6 +23,11 @@ namespace GestioneStudenti.Model
         }
 
         public string Matricola
+        {
+            get { return matricola; }
+        }
+
+        public string Id
         {
             get { return matricola; }
         }
@@ -129,6 +135,25 @@ namespace GestioneStudenti.Model
                 Console.WriteLine($"\nMedia: {Media:F2}");
             }
             Console.WriteLine("=====================================\n");
+        }
+
+        public int CompareTo(Studente? other)
+        {
+            if (other == null) return 1;
+
+            int mediaComparison = this.Media.CompareTo(other.Media);
+            if (mediaComparison != 0)
+            {
+                return -mediaComparison;
+            }
+
+            int cognomeComparison = string.Compare(this.Cognome, other.Cognome, StringComparison.OrdinalIgnoreCase);
+            if (cognomeComparison != 0)
+            {
+                return cognomeComparison;
+            }
+
+            return string.Compare(this.Nome, other.Nome, StringComparison.OrdinalIgnoreCase);
         }
 
         public override string ToString()

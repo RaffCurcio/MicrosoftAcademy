@@ -30,15 +30,3 @@ var valori = dizStudenti.Values;
 int numeroElementi = dizStudenti.Count;
 
 
-//coda FIFO
-Queue<Studente> codaStudenti = new Queue<Studente>();
-codaStudenti.Enqueue(mario); //aggiunta
-Studente primoStudente = codaStudenti.Dequeue(); //rimozione
-
-// 
-
-//stack LIFO
-Stack<Studente> stackStudenti = new Stack<Studente>();
-stackStudenti.Push(mario); //aggiunta
-Studente ultimoStudente = stackStudenti.Pop(); //rimozione
-

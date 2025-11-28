@@ -3,6 +3,7 @@ using System.Linq;
 using GestioneStudenti.Model;
 using GestioneStudenti.View;
 using GestioneStudenti.Repository;
+using GestioneStudenti.Services;
 
 namespace GestioneStudenti.Controller
 {
@@ -11,12 +12,45 @@ namespace GestioneStudenti.Controller
         private StudenteRepository studenteRepo;
         private ProfessoreRepository professoreRepo;
         private CorsoLaureaRepository corsoRepo;
+        private StoricoOperazioni storicoOperazioni;
+        private CodaIscrizioni codaIscrizioni;
 
-        public MainController(StudenteRepository studenteRepo, ProfessoreRepository professoreRepo, CorsoLaureaRepository corsoRepo)
+        public MainController(StudenteRepository studenteRepo, ProfessoreRepository professoreRepo, CorsoLaureaRepository corsoRepo, StoricoOperazioni storicoOperazioni, CodaIscrizioni codaIscrizioni)
         {
             this.studenteRepo = studenteRepo;
             this.professoreRepo = professoreRepo;
             this.corsoRepo = corsoRepo;
+            this.storicoOperazioni = storicoOperazioni;
+            this.codaIscrizioni = codaIscrizioni;
+
+            InizializzaCorsiPredefiniti();
+        }
+
+        private void InizializzaCorsiPredefiniti()
+        {
+            CorsoLaurea informatica = new CorsoLaurea("INF", "Informatica");
+            Professore prof1 = new Professore("Mario", "Rossi", "P001", "Programmazione");
+            Professore prof2 = new Professore("Luca", "Bianchi", "P002", "Database");
+            informatica.AggiungiProfessore(prof1);
+            informatica.AggiungiProfessore(prof2);
+            corsoRepo.Aggiungi(informatica);
+            professoreRepo.Aggiungi(prof1);
+            professoreRepo.Aggiungi(prof2);
+
+            CorsoLaurea matematica = new CorsoLaurea("MAT", "Matematica");
+            Professore prof3 = new Professore("Anna", "Verdi", "P003", "Analisi");
+            Professore prof4 = new Professore("Giulia", "Neri", "P004", "Geometria");
+            matematica.AggiungiProfessore(prof3);
+            matematica.AggiungiProfessore(prof4);
+            corsoRepo.Aggiungi(matematica);
+            professoreRepo.Aggiungi(prof3);
+            professoreRepo.Aggiungi(prof4);
+
+            CorsoLaurea fisica = new CorsoLaurea("FIS", "Fisica");
+            Professore prof5 = new Professore("Paolo", "Blu", "P005", "Meccanica");
+            fisica.AggiungiProfessore(prof5);
+            corsoRepo.Aggiungi(fisica);
+            professoreRepo.Aggiungi(prof5);
         }
 
         public void Run()
@@ -40,6 +74,9 @@ namespace GestioneStudenti.Controller
                         MenuCorsi();
                         break;
                     case "4":
+                        MenuAmministrativo();
+                        break;
+                    case "5":
                         exit = true;
                         ConsoleView.Stampa("Uscita");
                         break;
@@ -98,9 +135,31 @@ namespace GestioneStudenti.Controller
             string cognome = ConsoleView.LeggiInput("Cognome: ");
             string matricola = ConsoleView.LeggiInput("Matricola: ");
 
+            if (corsoRepo.ContaTotale() == 0)
+            {
+                ConsoleView.Stampa("Nessun corso disponibile. Impossibile procedere con l'iscrizione.");
+                return;
+            }
+
+            ConsoleView.Stampa("\nCorsi disponibili:");
+            foreach (var c in corsoRepo.OttieniTutti())
+                ConsoleView.Stampa($"  - {c}");
+
+            string codiceCorso = ConsoleView.LeggiInput("\nScegli il codice del corso di laurea: ");
+            CorsoLaurea corsoScelto = corsoRepo.TrovaPerCodice(codiceCorso);
+
+            if (corsoScelto == null)
+            {
+                ConsoleView.Stampa("Corso non trovato. Iscrizione annullata.");
+                return;
+            }
+
             Studente s = new Studente(nome, cognome, matricola);
-            studenteRepo.Aggiungi(s);
-            ConsoleView.Stampa("Studente aggiunto con successo!");
+            s.IscriviACorso(corsoScelto); 
+
+            codaIscrizioni.AggiungiRichiesta(s);
+            ConsoleView.Stampa("Richiesta di iscrizione inviata con successo!");
+            storicoOperazioni.Registra($"Inviata richiesta iscrizione per studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}, Corso: {corsoScelto.Nome}");
         }
 
         private void IscriviStudenteACorso()
@@ -134,6 +193,7 @@ namespace GestioneStudenti.Controller
             }
 
             s.IscriviACorso(corso);
+            storicoOperazioni.Registra($"Iscritto studente {s.Nome} {s.Cognome} al corso {corso.Nome}");
         }
 
         private void AggiungiVoto()
@@ -161,6 +221,7 @@ namespace GestioneStudenti.Controller
             int voto = int.Parse(ConsoleView.LeggiInput("Inserisci voto (18–30): "));
 
             s.AggiungiVoto(voto, materia);
+            storicoOperazioni.Registra($"Aggiunto voto {voto} in {materia} per studente {s.Nome} {s.Cognome}");
         }
 
         private void CercaStudente()
@@ -176,6 +237,7 @@ namespace GestioneStudenti.Controller
 
             ConsoleView.Stampa("\nStudente trovato:");
             ConsoleView.Stampa(s.ToString());
+            storicoOperazioni.Registra($"Cercato studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
         }
 
         private void VisualizzaTuttiStudenti()
@@ -191,6 +253,8 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa("\n===== ELENCO STUDENTI =====");
             foreach (var s in studenti)
                 ConsoleView.Stampa(s.ToString());
+
+            storicoOperazioni.Registra("Visualizzati tutti gli studenti.");
         }
 
         private void MostraLibretto()
@@ -205,6 +269,7 @@ namespace GestioneStudenti.Controller
             }
 
             s.StampaLibretto();
+            storicoOperazioni.Registra($"Visualizzato libretto studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
         }
 
         private void TrovaStudenteConMediaPiuAlta()
@@ -220,6 +285,7 @@ namespace GestioneStudenti.Controller
             Studente top = studenti.OrderByDescending(s => s.Media).First();
             ConsoleView.Stampa($"\nStudente con media più alta:");
             ConsoleView.Stampa($"{top.Nome} {top.Cognome} - Media: {top.Media:F2}");
+            storicoOperazioni.Registra($"Trovato studente con media più alta: {top.Nome} {top.Cognome}, Media: {top.Media:F2}");
         }
 
         // ===== MENU PROFESSORI =====
@@ -262,6 +328,7 @@ namespace GestioneStudenti.Controller
             Professore p = new Professore(nome, cognome, codiceId, materia);
             professoreRepo.Aggiungi(p);
             ConsoleView.Stampa("Professore aggiunto con successo!");
+            storicoOperazioni.Registra($"Aggiunto professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
         }
 
         private void VisualizzaTuttiProfessori()
@@ -277,6 +344,7 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa("\n===== ELENCO PROFESSORI =====");
             foreach (var p in professori)
                 ConsoleView.Stampa(p.ToString());
+            storicoOperazioni.Registra("Visualizzati tutti i professori.");
         }
 
         private void CercaProfessore()
@@ -292,6 +360,7 @@ namespace GestioneStudenti.Controller
 
             ConsoleView.Stampa("\nProfessore trovato:");
             ConsoleView.Stampa(p.ToString());
+            storicoOperazioni.Registra($"Cercato professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
         }
 
         // ===== MENU CORSI =====
@@ -338,6 +407,7 @@ namespace GestioneStudenti.Controller
             CorsoLaurea corso = new CorsoLaurea(codice, nome);
             corsoRepo.Aggiungi(corso);
             ConsoleView.Stampa("Corso di laurea aggiunto con successo!");
+            storicoOperazioni.Registra($"Aggiunto corso di laurea: {corso.Nome}, Codice: {corso.Codice}");
         }
 
         private void AggiungiProfessoreACorso()
@@ -381,6 +451,7 @@ namespace GestioneStudenti.Controller
             }
 
             corso.AggiungiProfessore(prof);
+            storicoOperazioni.Registra($"Assegnato professore {prof.Nome} {prof.Cognome} al corso {corso.Nome}");
         }
 
         private void VisualizzaTuttiCorsi()
@@ -396,6 +467,8 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa("\n===== ELENCO CORSI DI LAUREA =====");
             foreach (var c in corsi)
                 ConsoleView.Stampa(c.ToString());
+            
+            storicoOperazioni.Registra("Visualizzati tutti i corsi di laurea.");
         }
 
         private void VisualizzaDettagliCorso()
@@ -410,6 +483,7 @@ namespace GestioneStudenti.Controller
             }
 
             corso.StampaDettagli();
+            storicoOperazioni.Registra($"Visualizzati dettagli corso: {corso.Nome}, Codice: {corso.Codice}");
         }
 
         private void VisualizzaStudentiPerCorso()
@@ -434,6 +508,74 @@ namespace GestioneStudenti.Controller
             {
                 foreach (var s in studenti)
                     ConsoleView.Stampa(s.ToString());
+            }
+            storicoOperazioni.Registra($"Visualizzati studenti iscritti al corso: {corso.Nome}, Codice: {corso.Codice}");
+        }
+
+        // ===== MENU AMMINISTRATIVO =====
+        private void MenuAmministrativo()
+        {
+            bool indietro = false;
+            while (!indietro)
+            {
+                ConsoleView.MostraMenuAmministrativo();
+                string scelta = Console.ReadLine();
+
+                switch (scelta)
+                {
+                    case "1":
+                        //vedere le richieste di iscrizione studenti
+                        foreach (var studente in codaIscrizioni.ottieniRichiesteInAttesa())
+                        {
+                            ConsoleView.Stampa(studente.ToString());
+                        }
+                        break;
+                    case "2":
+                        //approva la prossima richiesta di iscrizione
+                        var studenteApprovato = codaIscrizioni.ApprovaProssimaRichiesta();
+                        if (studenteApprovato != null)
+                        {
+                            studenteRepo.Aggiungi(studenteApprovato);
+                            ConsoleView.Stampa($"Studente {studenteApprovato.Nome} {studenteApprovato.Cognome} approvato e aggiunto al sistema.");
+                            storicoOperazioni.Registra($"Approvata iscrizione studente: {studenteApprovato.Nome} {studenteApprovato.Cognome}, Matricola: {studenteApprovato.Matricola}");
+                        }
+                        else
+                        {
+                            ConsoleView.Stampa("Nessuna richiesta in coda.");
+                        }
+                        break;
+                    case "3":
+                        //visualizza il prossimo studente in coda
+                        var prossimoStudente = codaIscrizioni.prossimoStudente();
+                        if (prossimoStudente != null)
+                        {
+                            ConsoleView.Stampa($"Prossimo studente in coda: {prossimoStudente.Nome} {prossimoStudente.Cognome}, Matricola: {prossimoStudente.Matricola}");
+                        }
+                        else
+                        {
+                            ConsoleView.Stampa("Nessuna richiesta in coda.");
+                        }
+                        break;
+                    case "4":
+                        //visualizza lo storico delle operazioni
+                        var storico = storicoOperazioni.OttieniTutte();
+                        foreach (var operazione in storico)
+                        {
+                            ConsoleView.Stampa(operazione);
+                        }
+                        break;
+                    case "5":
+                        //visualizza il numero di richieste in coda
+                        int numeroRichieste = codaIscrizioni.NumeroRichieste;
+                        ConsoleView.Stampa($"Numero di richieste in coda: {numeroRichieste}");
+                        break;
+                    case "0":
+                        indietro = true;
+                        break;
+                    default:
+                        ConsoleView.Stampa("Opzione non valida.");
+                        break;
+                }
             }
         }
     }

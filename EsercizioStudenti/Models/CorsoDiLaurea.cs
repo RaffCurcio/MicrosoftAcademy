@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GestioneStudenti.Interfaces;
 
 namespace GestioneStudenti.Model
 {
-    public class CorsoLaurea
+    public class CorsoLaurea : IEntita
     {
         private string codice;
         private string nome;
@@ -18,6 +19,11 @@ namespace GestioneStudenti.Model
         }
 
         public string Codice
+        {
+            get { return codice; }
+        }
+
+        public string Id
         {
             get { return codice; }
         }
