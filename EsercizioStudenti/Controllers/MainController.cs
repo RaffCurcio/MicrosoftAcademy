@@ -14,15 +14,16 @@ namespace GestioneStudenti.Controller
         private CorsoLaureaRepository corsoRepo;
         private StoricoOperazioni storicoOperazioni;
         private CodaIscrizioni codaIscrizioni;
+        private LoggerServices loggerServices;
 
-        public MainController(StudenteRepository studenteRepo, ProfessoreRepository professoreRepo, CorsoLaureaRepository corsoRepo, StoricoOperazioni storicoOperazioni, CodaIscrizioni codaIscrizioni)
+        public MainController(StudenteRepository studenteRepo, ProfessoreRepository professoreRepo, CorsoLaureaRepository corsoRepo, StoricoOperazioni storicoOperazioni, CodaIscrizioni codaIscrizioni, LoggerServices loggerServices)
         {
             this.studenteRepo = studenteRepo;
             this.professoreRepo = professoreRepo;
             this.corsoRepo = corsoRepo;
             this.storicoOperazioni = storicoOperazioni;
             this.codaIscrizioni = codaIscrizioni;
-
+            this.loggerServices = loggerServices;
             InizializzaCorsiPredefiniti();
         }
 
@@ -160,6 +161,7 @@ namespace GestioneStudenti.Controller
             codaIscrizioni.AggiungiRichiesta(s);
             ConsoleView.Stampa("Richiesta di iscrizione inviata con successo!");
             storicoOperazioni.Registra($"Inviata richiesta iscrizione per studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}, Corso: {corsoScelto.Nome}");
+            loggerServices.LogInfo($"Inviata richiesta iscrizione per studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}, Corso: {corsoScelto.Nome}");
         }
 
         private void IscriviStudenteACorso()
@@ -194,34 +196,55 @@ namespace GestioneStudenti.Controller
 
             s.IscriviACorso(corso);
             storicoOperazioni.Registra($"Iscritto studente {s.Nome} {s.Cognome} al corso {corso.Nome}");
+            loggerServices.LogInfo($"Iscritto studente {s.Nome} {s.Cognome} al corso {corso.Nome}");
         }
 
         private void AggiungiVoto()
         {
-            string mat = ConsoleView.LeggiInput("Matricola studente: ");
-            Studente s = studenteRepo.TrovaPerMatricola(mat);
-
-            if (s == null)
+            try
             {
-                ConsoleView.Stampa("Studente non trovato.");
-                return;
-            }
+                string mat = ConsoleView.LeggiInput("Matricola studente: ");
+                Studente s = studenteRepo.TrovaPerMatricola(mat);
 
-            if (s.CorsoLaurea == null)
+                if (s == null)
+                {
+                    loggerServices.LogWarning($"Tentativo di aggiungere voto a studente non esistente. Matricola: {mat}");
+                    ConsoleView.Stampa("Studente non trovato.");
+                    return;
+                }
+
+                if (s.CorsoLaurea == null)
+                {
+                    loggerServices.LogWarning($"Studente {s.Nome} {s.Cognome} non iscritto a nessun corso.");
+                    ConsoleView.Stampa("Lo studente non è iscritto a nessun corso.");
+                    return;
+                }
+
+                ConsoleView.Stampa($"\nMaterie disponibili nel corso {s.CorsoLaurea.Nome}:");
+                foreach (var m in s.CorsoLaurea.GetMaterie())
+                    ConsoleView.Stampa($"  - {m}");
+
+                string materia = ConsoleView.LeggiInput("\nInserisci materia: ");
+                int voto = int.Parse(ConsoleView.LeggiInput("Inserisci voto (18–30): "));
+
+                s.AggiungiVoto(voto, materia);
+                if(voto < 18 || voto > 30)
+                {
+                    loggerServices.LogWarning($"Voto fuori range inserito per studente {s.Nome} {s.Cognome}: {voto} in {materia}");
+                    ConsoleView.Stampa("Attenzione: il voto inserito è fuori dal range valido (18-30).");
+                }   
+                loggerServices.LogInfo($"Aggiunto voto {voto} in {materia} per studente {s.Nome} {s.Cognome}");
+            }
+            catch (FormatException ex)
             {
-                ConsoleView.Stampa("Lo studente non è iscritto a nessun corso.");
-                return;
+                loggerServices.LogError($"Formato voto non valido: {ex.Message}");
+                ConsoleView.Stampa("Errore: inserisci un numero valido per il voto.");
             }
-
-            ConsoleView.Stampa($"\nMaterie disponibili nel corso {s.CorsoLaurea.Nome}:");
-            foreach (var m in s.CorsoLaurea.GetMaterie())
-                ConsoleView.Stampa($"  - {m}");
-
-            string materia = ConsoleView.LeggiInput("\nInserisci materia: ");
-            int voto = int.Parse(ConsoleView.LeggiInput("Inserisci voto (18–30): "));
-
-            s.AggiungiVoto(voto, materia);
-            storicoOperazioni.Registra($"Aggiunto voto {voto} in {materia} per studente {s.Nome} {s.Cognome}");
+            catch (Exception ex)
+            {
+                loggerServices.LogError($"Errore imprevisto durante l'aggiunta del voto: {ex.Message}");
+                ConsoleView.Stampa("Si è verificato un errore imprevisto.");
+            }
         }
 
         private void CercaStudente()
@@ -231,6 +254,7 @@ namespace GestioneStudenti.Controller
 
             if (s == null)
             {
+                loggerServices.LogWarning($"Studente non trovato con matricola: {mat}");
                 ConsoleView.Stampa("Studente non trovato.");
                 return;
             }
@@ -238,6 +262,7 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa("\nStudente trovato:");
             ConsoleView.Stampa(s.ToString());
             storicoOperazioni.Registra($"Cercato studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
+            loggerServices.LogInfo($"Cercato studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
         }
 
         private void VisualizzaTuttiStudenti()
@@ -255,6 +280,7 @@ namespace GestioneStudenti.Controller
                 ConsoleView.Stampa(s.ToString());
 
             storicoOperazioni.Registra("Visualizzati tutti gli studenti.");
+            loggerServices.LogInfo("Visualizzati tutti gli studenti.");
         }
 
         private void MostraLibretto()
@@ -269,6 +295,7 @@ namespace GestioneStudenti.Controller
             }
 
             s.StampaLibretto();
+            loggerServices.LogInfo($"Visualizzato libretto studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
             storicoOperazioni.Registra($"Visualizzato libretto studente: {s.Nome} {s.Cognome}, Matricola: {s.Matricola}");
         }
 
@@ -286,6 +313,7 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa($"\nStudente con media più alta:");
             ConsoleView.Stampa($"{top.Nome} {top.Cognome} - Media: {top.Media:F2}");
             storicoOperazioni.Registra($"Trovato studente con media più alta: {top.Nome} {top.Cognome}, Media: {top.Media:F2}");
+            loggerServices.LogInfo($"Trovato studente con media più alta: {top.Nome} {top.Cognome}, Media: {top.Media:F2}");
         }
 
         // ===== MENU PROFESSORI =====
@@ -329,6 +357,7 @@ namespace GestioneStudenti.Controller
             professoreRepo.Aggiungi(p);
             ConsoleView.Stampa("Professore aggiunto con successo!");
             storicoOperazioni.Registra($"Aggiunto professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
+            loggerServices.LogInfo($"Aggiunto professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
         }
 
         private void VisualizzaTuttiProfessori()
@@ -345,6 +374,7 @@ namespace GestioneStudenti.Controller
             foreach (var p in professori)
                 ConsoleView.Stampa(p.ToString());
             storicoOperazioni.Registra("Visualizzati tutti i professori.");
+            loggerServices.LogInfo("Visualizzati tutti i professori.");
         }
 
         private void CercaProfessore()
@@ -361,6 +391,7 @@ namespace GestioneStudenti.Controller
             ConsoleView.Stampa("\nProfessore trovato:");
             ConsoleView.Stampa(p.ToString());
             storicoOperazioni.Registra($"Cercato professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
+            loggerServices.LogInfo($"Cercato professore: {p.Nome} {p.Cognome}, Codice ID: {p.CodiceId}");
         }
 
         // ===== MENU CORSI =====
@@ -408,6 +439,7 @@ namespace GestioneStudenti.Controller
             corsoRepo.Aggiungi(corso);
             ConsoleView.Stampa("Corso di laurea aggiunto con successo!");
             storicoOperazioni.Registra($"Aggiunto corso di laurea: {corso.Nome}, Codice: {corso.Codice}");
+            loggerServices.LogInfo($"Aggiunto corso di laurea: {corso.Nome}, Codice: {corso.Codice}");
         }
 
         private void AggiungiProfessoreACorso()
@@ -452,6 +484,7 @@ namespace GestioneStudenti.Controller
 
             corso.AggiungiProfessore(prof);
             storicoOperazioni.Registra($"Assegnato professore {prof.Nome} {prof.Cognome} al corso {corso.Nome}");
+            loggerServices.LogInfo($"Assegnato professore {prof.Nome} {prof.Cognome} al corso {corso.Nome}");
         }
 
         private void VisualizzaTuttiCorsi()
@@ -469,6 +502,7 @@ namespace GestioneStudenti.Controller
                 ConsoleView.Stampa(c.ToString());
             
             storicoOperazioni.Registra("Visualizzati tutti i corsi di laurea.");
+            loggerServices.LogInfo("Visualizzati tutti i corsi di laurea.");
         }
 
         private void VisualizzaDettagliCorso()
@@ -484,6 +518,7 @@ namespace GestioneStudenti.Controller
 
             corso.StampaDettagli();
             storicoOperazioni.Registra($"Visualizzati dettagli corso: {corso.Nome}, Codice: {corso.Codice}");
+            loggerServices.LogInfo($"Visualizzati dettagli corso: {corso.Nome}, Codice: {corso.Codice}");
         }
 
         private void VisualizzaStudentiPerCorso()
@@ -510,6 +545,7 @@ namespace GestioneStudenti.Controller
                     ConsoleView.Stampa(s.ToString());
             }
             storicoOperazioni.Registra($"Visualizzati studenti iscritti al corso: {corso.Nome}, Codice: {corso.Codice}");
+            loggerServices.LogInfo($"Visualizzati studenti iscritti al corso: {corso.Nome}, Codice: {corso.Codice}");
         }
 
         // ===== MENU AMMINISTRATIVO =====
@@ -529,6 +565,7 @@ namespace GestioneStudenti.Controller
                         {
                             ConsoleView.Stampa(studente.ToString());
                         }
+                        loggerServices.LogInfo("Visualizzate tutte le richieste di iscrizione studenti.");
                         break;
                     case "2":
                         //approva la prossima richiesta di iscrizione
@@ -538,9 +575,11 @@ namespace GestioneStudenti.Controller
                             studenteRepo.Aggiungi(studenteApprovato);
                             ConsoleView.Stampa($"Studente {studenteApprovato.Nome} {studenteApprovato.Cognome} approvato e aggiunto al sistema.");
                             storicoOperazioni.Registra($"Approvata iscrizione studente: {studenteApprovato.Nome} {studenteApprovato.Cognome}, Matricola: {studenteApprovato.Matricola}");
+                            loggerServices.LogInfo($"Approvata iscrizione studente: {studenteApprovato.Nome} {studenteApprovato.Cognome}, Matricola: {studenteApprovato.Matricola}");
                         }
                         else
                         {
+                            loggerServices.LogWarning("Tentativo di approvare richiesta ma la coda è vuota.");
                             ConsoleView.Stampa("Nessuna richiesta in coda.");
                         }
                         break;
@@ -550,9 +589,11 @@ namespace GestioneStudenti.Controller
                         if (prossimoStudente != null)
                         {
                             ConsoleView.Stampa($"Prossimo studente in coda: {prossimoStudente.Nome} {prossimoStudente.Cognome}, Matricola: {prossimoStudente.Matricola}");
+                            loggerServices.LogInfo($"Visualizzato prossimo studente in coda: {prossimoStudente.Nome} {prossimoStudente.Cognome}");
                         }
                         else
                         {
+                            loggerServices.LogWarning("Coda iscrizioni vuota durante visualizzazione prossimo studente.");
                             ConsoleView.Stampa("Nessuna richiesta in coda.");
                         }
                         break;
@@ -563,16 +604,20 @@ namespace GestioneStudenti.Controller
                         {
                             ConsoleView.Stampa(operazione);
                         }
+                        loggerServices.LogInfo("Visualizzato lo storico delle operazioni.");
                         break;
                     case "5":
                         //visualizza il numero di richieste in coda
                         int numeroRichieste = codaIscrizioni.NumeroRichieste;
                         ConsoleView.Stampa($"Numero di richieste in coda: {numeroRichieste}");
+                        loggerServices.LogInfo("Visualizzato il numero di richieste in coda.");
                         break;
                     case "0":
                         indietro = true;
+                        loggerServices.LogInfo("Uscito dal menu amministrativo.");
                         break;
                     default:
+                        loggerServices.LogWarning("Selezionata un'opzione non valida nel menu amministrativo.");
                         ConsoleView.Stampa("Opzione non valida.");
                         break;
                 }

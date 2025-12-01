@@ -11,8 +11,9 @@ class Program
         CorsoLaureaRepository corsoRepo = new CorsoLaureaRepository();
         StoricoOperazioni storicoOperazioni = new StoricoOperazioni();
         CodaIscrizioni codaIscrizioni = new CodaIscrizioni();
+        LoggerServices loggerServices = new LoggerServices();
         
-        MainController controller = new MainController(studenteRepo, professoreRepo, corsoRepo, storicoOperazioni, codaIscrizioni);
+        MainController controller = new MainController(studenteRepo, professoreRepo, corsoRepo, storicoOperazioni, codaIscrizioni, loggerServices);
 
         
         controller.Run();
