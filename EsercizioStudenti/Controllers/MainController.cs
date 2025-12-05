@@ -84,6 +84,9 @@ namespace GestioneStudenti.Controller
                         logController.MostraMenuLog();
                         break;
                     case "6":
+                        logController.GestisciLog();
+                        break;
+                    case "7":
                         exit = true;
                         ConsoleView.Stampa("Uscita");
                         break;

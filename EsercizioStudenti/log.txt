@@ -2,3 +2,7 @@
 12/1/2025 5:38:55 PM: INFO: Approvata iscrizione studente: Ra Cu, Matricola: 1
 12/4/2025 3:56:26 PM: INFO: Inviata richiesta iscrizione per studente: Ra Cu, Matricola: 123, Corso: Informatica
 12/4/2025 3:57:46 PM: INFO: Inviata richiesta iscrizione per studente: Ra Cu, Matricola: 432, Corso: Informatica
+12/5/2025 2:51:43 PM: INFO: Inviata richiesta iscrizione per studente: Pascal Sant, Matricola: 555, Corso: Fisica
+12/5/2025 2:51:55 PM: INFO: Visualizzate tutte le richieste di iscrizione studenti.
+12/5/2025 2:51:57 PM: INFO: Approvata iscrizione studente: Pascal Sant, Matricola: 555
+12/5/2025 2:51:58 PM: INFO: Uscito dal menu amministrativo.

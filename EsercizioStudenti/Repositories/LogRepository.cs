@@ -208,5 +208,18 @@ namespace GestioneStudenti.Repositories
                 Console.WriteLine("Il sistema continuerà a funzionare senza logging su database.");
             }
         }
+
+        public bool AbilitaLog()
+        {
+            return true;
+        }
+        public bool DisabilitaLog()
+        {
+            return false;
+        }
+        public bool DisabilitaLogPerClasse()
+        {
+            return true;
+        }
     }
 }

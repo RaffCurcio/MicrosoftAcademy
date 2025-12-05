@@ -7,6 +7,9 @@ namespace GestioneStudenti.Controllers
 {
     public class LogController
     {
+        private bool stato = true;
+
+        private int classe = 0;
         private readonly LogRepository logRepository;
 
         public LogController()
@@ -33,33 +36,64 @@ namespace GestioneStudenti.Controllers
 
                 string scelta = Console.ReadLine();
 
-                switch (scelta)
+                if (stato)
                 {
-                    case "1":
-                        VisualizzaTuttiLog();
-                        break;
-                    case "2":
-                        VisualizzaLogPerEntita("Studente");
-                        break;
-                    case "3":
-                        VisualizzaLogPerEntita("Professore");
-                        break;
-                    case "4":
-                        VisualizzaLogPerEntita("CorsoDiLaurea");
-                        break;
-                    case "5":
-                        VisualizzaSoloErrori();
-                        break;
-                    case "6":
-                        MostraStatistiche();
-                        break;
-                    case "0":
-                        continua = false;
-                        break;
-                    default:
-                        Console.WriteLine("Opzione non valida.");
-                        break;
+                    switch (scelta)
+                    {
+                        case "1":
+                                VisualizzaTuttiLog();
+                            break;
+                        case "2":
+                            if(classe == 1){
+                                Console.WriteLine("Il logging per la classe Studente è disabilitato.");
+                            } else {
+                                VisualizzaLogPerEntita("Studente");
+                            }
+                            break;
+                        case "3":
+                            if(classe == 2){
+                                Console.WriteLine("Il logging per la classe Professore è disabilitato.");
+                            } else {
+                                VisualizzaLogPerEntita("Professore");
+                            }
+                            break;
+                        case "4":
+                            if(classe == 3){
+                                Console.WriteLine("Il logging per la classe CorsoDiLaurea è disabilitato.");
+                            } else {
+                                VisualizzaLogPerEntita("CorsoDiLaurea");
+                            }
+                            break;
+                        case "5":
+                            if(stato){
+                                VisualizzaSoloErrori();
+                            } else {
+                                Console.WriteLine("Il sistema di logging è disabilitato.");
+                            }
+                            break;
+                        case "6":
+                        if(stato){
+                                MostraStatistiche();
+                            } else {
+                                Console.WriteLine("Il sistema di logging è disabilitato.");
+                            }
+                            break;
+                        case "0":
+                            continua = false;
+                            break;
+                        default:
+                            Console.WriteLine("Opzione non valida.");
+                            break;
+                        
+                    }
+                } else if (scelta == "0")
+                {
+                    continua = false;
                 }
+                else
+                {
+                    Console.WriteLine("Il sistema di logging è disabilitato.");
+                }    
             }
         }
 
@@ -176,6 +210,68 @@ namespace GestioneStudenti.Controllers
         {
             string icona = log.Esito == "SUCCESS" ? "riuscito" : "non riuscito";
             return $"{icona} [{log.DataOra:dd/MM/yyyy HH:mm:ss}] {log.Operazione} su {log.Entita} - {log.Descrizione}";
+        }
+
+
+
+        //GESTIONE LOG ADMIN
+        public void GestisciLog()
+        {
+            bool continua = true;
+            while (continua)
+            {
+                Console.WriteLine("\n╔════════════════════════════════════╗");
+                Console.WriteLine("║        GESTIONE LOG ADMIN          ║");
+                Console.WriteLine("╚════════════════════════════════════╝");
+                Console.WriteLine("1. Abilita log");
+                Console.WriteLine("2. Disabilita log");
+                Console.WriteLine("3. Disabilita log per classe");
+                Console.WriteLine("0. Torna al menu principale");
+                Console.Write("\nScegli un'opzione: ");
+
+                string scelta = Console.ReadLine();
+
+                switch (scelta)
+                {
+                    case "1":
+                        stato = logRepository.AbilitaLog();
+                        Console.WriteLine("Log abilitato.");
+                        break;
+                    case "2":
+                        stato = logRepository.DisabilitaLog();
+                        Console.WriteLine("Log disabilitato.");
+                        break;
+                    case "3":
+                        //metodo per scegliere la classe
+                        classe = ScegliClasse();
+                        //disabilitare il log per la classe scelta
+                        logRepository.DisabilitaLogPerClasse();
+                        Console.WriteLine($"Log disabilitato per la classe {classe}.");
+                        break;
+                    case "0":
+                        continua = false;
+                        break;
+                    default:
+                        Console.WriteLine("Opzione non valida.");
+                        break;
+                }
+            }
+        }
+
+        //metodo per scegliere la classe da disabilitare
+        private int ScegliClasse()
+        {
+            Console.WriteLine("\nScegli la classe per disabilitare il log:");
+            Console.WriteLine("1. Studente");
+            Console.WriteLine("2. Professore");
+            Console.WriteLine("3. CorsoDiLaurea");
+            Console.Write("Inserisci il numero della classe: ");
+            int sceltaClasse;
+            while (!int.TryParse(Console.ReadLine(), out sceltaClasse) || sceltaClasse < 1 || sceltaClasse > 3)
+            {
+                Console.Write("Scelta non valida. Riprova: ");
+            }
+            return sceltaClasse;
         }
     }
 }

@@ -14,7 +14,8 @@ namespace GestioneStudenti.View
             Console.WriteLine("3. Gestione Corsi di Laurea");
             Console.WriteLine("4. Gestione Amministrativo");
             Console.WriteLine("5. Sistema Log & Monitoraggio");
-            Console.WriteLine("6. Esci");
+            Console.WriteLine("6. Gestione Admin Logs");
+            Console.WriteLine("7. Esci");
             Console.Write("\nScegli un'opzione: ");
         }
 
@@ -62,6 +63,17 @@ namespace GestioneStudenti.View
             Console.WriteLine("3. Visualizza prossimo studente in coda");
             Console.WriteLine("4. Visualizza storico operazioni");
             Console.WriteLine("5. Visualizza numero richieste in coda");
+            Console.WriteLine("0. Indietro");
+            Console.Write("\nScegli un'opzione: ");
+        }
+
+        //menu per disalibilitare o abilitare il log
+        public static void MostraMenuLog()
+        {
+            Console.WriteLine("\n========== MENU LOG & MONITORAGGIO ==========");
+            Console.WriteLine("1. Abilita log");
+            Console.WriteLine("2. Disabilita log");
+            Console.WriteLine("3. Disabilita log per classe");
             Console.WriteLine("0. Indietro");
             Console.Write("\nScegli un'opzione: ");
         }
