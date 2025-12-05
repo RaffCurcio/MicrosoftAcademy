@@ -8,12 +8,12 @@ namespace EsercizioProdotti.Controllers
     public class CittaController
     {
         private readonly CittaRepository repositoryCitta;
-        private readonly ViewGenerica<Citta> vista;
+        private readonly ViewGenerica<Citta> view;
 
-        public CittaController(CittaRepository repositoryCitta, ViewGenerica<Citta> vista)
+        public CittaController(CittaRepository repositoryCitta, ViewGenerica<Citta> view)
         {
             this.repositoryCitta = repositoryCitta;
-            this.vista = vista;
+            this.view = view;
         }
 
         public void Esegui()
@@ -21,8 +21,8 @@ namespace EsercizioProdotti.Controllers
             bool esci = false;
             while (!esci)
             {
-                vista.MostraMenu();
-                int scelta = vista.OttieniSceltaUtente();
+                view.MostraMenu();
+                int scelta = view.OttieniSceltaUtente();
 
                 switch (scelta)
                 {
@@ -40,10 +40,10 @@ namespace EsercizioProdotti.Controllers
                         break;
                     case 5:
                         esci = true;
-                        vista.MostraMessaggio("Uscita dal menu città...");
+                        view.MostraMessaggio("Uscita dal menu città...");
                         break;
                     default:
-                        vista.MostraOpzioneNonValida();
+                        view.MostraOpzioneNonValida();
                         break;
                 }
             }
@@ -52,84 +52,84 @@ namespace EsercizioProdotti.Controllers
         private void VisualizzaTutteCitta()
         {
             var citta = repositoryCitta.OttieniTutti();
-            vista.MostraLista(citta);
+            view.MostraLista(citta);
         }
 
         private void AggiungiCitta()
         {
-            vista.MostraTitolo("Nuova Città");
-            string nome = vista.OttieniInput("Nome");
-            string regione = vista.OttieniInput("Regione");
+            view.MostraTitolo("Nuova Città");
+            string nome = view.OttieniInput("Nome");
+            string regione = view.OttieniInput("Regione");
             
             Citta citta = new Citta(nome, regione);
             
             if (repositoryCitta.Inserisci(citta))
             {
-                vista.MostraMessaggio("Città aggiunta con successo!");
+                view.MostraMessaggio("Città aggiunta con successo!");
             }
             else
             {
-                vista.MostraMessaggio("Errore durante l'aggiunta della città.");
+                view.MostraMessaggio("Errore durante l'aggiunta della città.");
             }
         }
 
         private void AggiornaCitta()
         {
-            int id = vista.OttieniId("Inserisci l'ID della città da modificare: ");
+            int id = view.OttieniId("Inserisci l'ID della città da modificare: ");
             var citta = repositoryCitta.OttieniPerId(id);
             
             if (citta != null)
             {
-                vista.MostraElemento(citta);
+                view.MostraElemento(citta);
                 
-                vista.MostraTitolo("Modifica Città");
-                string nome = vista.OttieniInput("Nuovo Nome");
-                string regione = vista.OttieniInput("Nuova Regione");
+                view.MostraTitolo("Modifica Città");
+                string nome = view.OttieniInput("Nuovo Nome");
+                string regione = view.OttieniInput("Nuova Regione");
                 
                 Citta cittaAggiornata = new Citta(id, nome, regione);
                 
                 if (repositoryCitta.Aggiorna(cittaAggiornata))
                 {
-                    vista.MostraMessaggio("Città aggiornata con successo!");
+                    view.MostraMessaggio("Città aggiornata con successo!");
                 }
                 else
                 {
-                    vista.MostraMessaggio("Errore durante l'aggiornamento della città.");
+                    view.MostraMessaggio("Errore durante l'aggiornamento della città.");
                 }
             }
             else
             {
-                vista.MostraMessaggio("Città non trovata.");
+                view.MostraMessaggio("Città non trovata.");
             }
         }
 
         private void EliminaCitta()
         {
-            int id = vista.OttieniId("Inserisci l'ID della città da eliminare: ");
+            int id = view.OttieniId("Inserisci l'ID della città da eliminare: ");
             var citta = repositoryCitta.OttieniPerId(id);
             
             if (citta != null)
             {
-                vista.MostraElemento(citta);
-                if (vista.ConfermaEliminazione())
+                view.MostraElemento(citta);
+                if (view.ConfermaEliminazione())
                 {
                     if (repositoryCitta.Elimina(id))
                     {
-                        vista.MostraMessaggio("Città eliminata con successo!");
+                        view.MostraMessaggio("Città eliminata con successo!");
                     }
                     else
                     {
-                        vista.MostraMessaggio("Errore durante l'eliminazione della città.");
+                        view.MostraMessaggio("Errore durante l'eliminazione della città.");
                     }
                 }
                 else
                 {
-                    vista.MostraMessaggio("Operazione annullata.");
+                    view.MostraMessaggio("Operazione annullata.");
                 }
             }
             else
             {
-                vista.MostraMessaggio("Città non trovata.");
+                view.MostraMessaggio("Città non trovata.");
             }
         }
     }

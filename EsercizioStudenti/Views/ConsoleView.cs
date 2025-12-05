@@ -13,7 +13,8 @@ namespace GestioneStudenti.View
             Console.WriteLine("2. Gestione Professori");
             Console.WriteLine("3. Gestione Corsi di Laurea");
             Console.WriteLine("4. Gestione Amministrativo");
-            Console.WriteLine("5. Esci");
+            Console.WriteLine("5. Sistema Log & Monitoraggio");
+            Console.WriteLine("6. Esci");
             Console.Write("\nScegli un'opzione: ");
         }
 

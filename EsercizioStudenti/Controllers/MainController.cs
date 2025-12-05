@@ -4,6 +4,7 @@ using GestioneStudenti.Model;
 using GestioneStudenti.View;
 using GestioneStudenti.Repository;
 using GestioneStudenti.Services;
+using GestioneStudenti.Controllers;
 
 namespace GestioneStudenti.Controller
 {
@@ -15,6 +16,7 @@ namespace GestioneStudenti.Controller
         private StoricoOperazioni storicoOperazioni;
         private CodaIscrizioni codaIscrizioni;
         private LoggerServices loggerServices;
+        private LogController logController;
 
         public MainController(StudenteRepository studenteRepo, ProfessoreRepository professoreRepo, CorsoLaureaRepository corsoRepo, StoricoOperazioni storicoOperazioni, CodaIscrizioni codaIscrizioni, LoggerServices loggerServices)
         {
@@ -24,6 +26,7 @@ namespace GestioneStudenti.Controller
             this.storicoOperazioni = storicoOperazioni;
             this.codaIscrizioni = codaIscrizioni;
             this.loggerServices = loggerServices;
+            this.logController = new LogController();
             InizializzaCorsiPredefiniti();
         }
 
@@ -78,6 +81,9 @@ namespace GestioneStudenti.Controller
                         MenuAmministrativo();
                         break;
                     case "5":
+                        logController.MostraMenuLog();
+                        break;
+                    case "6":
                         exit = true;
                         ConsoleView.Stampa("Uscita");
                         break;

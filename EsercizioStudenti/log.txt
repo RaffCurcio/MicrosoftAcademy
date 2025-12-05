@@ -1,2 +1,4 @@
 12/1/2025 5:38:43 PM: INFO: Inviata richiesta iscrizione per studente: Ra Cu, Matricola: 1, Corso: Informatica
 12/1/2025 5:38:55 PM: INFO: Approvata iscrizione studente: Ra Cu, Matricola: 1
+12/4/2025 3:56:26 PM: INFO: Inviata richiesta iscrizione per studente: Ra Cu, Matricola: 123, Corso: Informatica
+12/4/2025 3:57:46 PM: INFO: Inviata richiesta iscrizione per studente: Ra Cu, Matricola: 432, Corso: Informatica

@@ -11,6 +11,11 @@ class Program
         // Test connessione al DB
         StRepository stRepo = new StRepository();
         stRepo.TestConnection();
+        
+        // Test connessione per il sistema di logging
+        var logRepo = new GestioneStudenti.Repositories.LogRepository();
+        logRepo.TestConnection();
+        logRepo.CreaTabellaSeDNonEsiste();
 
         StudenteRepository studenteRepo = new StudenteRepository();
         ProfessoreRepository professoreRepo = new ProfessoreRepository();
