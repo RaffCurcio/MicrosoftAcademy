@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GestioneStudenti.Models;
 using GestioneStudenti.Repositories;
+using GestioneStudenti.Utilities;
 
 namespace GestioneStudenti.Controllers
 {
@@ -234,12 +235,10 @@ namespace GestioneStudenti.Controllers
                 switch (scelta)
                 {
                     case "1":
-                        stato = logRepository.AbilitaLog();
-                        Console.WriteLine("Log abilitato.");
+                        AbilitaLogMenu();
                         break;
                     case "2":
-                        stato = logRepository.DisabilitaLog();
-                        Console.WriteLine("Log disabilitato.");
+                        DisabilitaLogMenu();
                         break;
                     case "3":
                         //metodo per scegliere la classe
@@ -272,6 +271,54 @@ namespace GestioneStudenti.Controllers
                 Console.Write("Scelta non valida. Riprova: ");
             }
             return sceltaClasse;
+        }
+
+        private void AbilitaLogMenu()
+        {
+            Console.WriteLine("\nScegli quale log abilitare:");
+            Console.WriteLine("1. Log Database");
+            Console.WriteLine("2. Log File");
+            Console.Write("Scelta: ");
+            
+            string scelta = Console.ReadLine();
+            switch (scelta)
+            {
+                case "1":
+                    stato = logRepository.AbilitaLog();
+                    Console.WriteLine("Log database abilitato.");
+                    break;
+                case "2":
+                    Logger.Instance.EnableLogging();
+                    Console.WriteLine("Log file abilitato.");
+                    break;
+                default:
+                    Console.WriteLine("Scelta non valida.");
+                    break;
+            }
+        }
+
+        private void DisabilitaLogMenu()
+        {
+            Console.WriteLine("\nScegli quale log disabilitare:");
+            Console.WriteLine("1. Log Database");
+            Console.WriteLine("2. Log File");
+            Console.Write("Scelta: ");
+            
+            string scelta = Console.ReadLine();
+            switch (scelta)
+            {
+                case "1":
+                    stato = logRepository.DisabilitaLog();
+                    Console.WriteLine("Log database disabilitato.");
+                    break;
+                case "2":
+                    Logger.Instance.DisableLogging();
+                    Console.WriteLine("Log file disabilitato.");
+                    break;
+                default:
+                    Console.WriteLine("Scelta non valida.");
+                    break;
+            }
         }
     }
 }

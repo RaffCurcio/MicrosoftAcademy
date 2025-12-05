@@ -8,6 +8,7 @@ namespace GestioneStudenti.Utilities
         private static Logger? _instance = null;
         private static readonly object _lock = new object();
         private List<string> logs = new List<string>();
+        private bool isEnabled = true;
 
         private Logger()
         {
@@ -30,6 +31,8 @@ namespace GestioneStudenti.Utilities
 
         public void Log(string message)
         {
+            if (!isEnabled) return;
+            
             string logEntry = $"{DateTime.Now}: {message}";
             logs.Add(logEntry);
             Console.WriteLine(logEntry);
@@ -59,6 +62,21 @@ namespace GestioneStudenti.Utilities
         public void LogError(string message)
         {
             Log($"ERROR: {message}");
+        }
+
+        public void EnableLogging()
+        {
+            isEnabled = true;
+        }
+
+        public void DisableLogging()
+        {
+            isEnabled = false;
+        }
+
+        public bool IsLoggingEnabled()
+        {
+            return isEnabled;
         }
     }
 }
