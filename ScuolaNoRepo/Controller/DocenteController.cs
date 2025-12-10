@@ -2,44 +2,42 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ScuolaNoRepo.Model;
-using ScuolaNoRepo.Data;
-
+using ScuolaNoRepo.Repositories;
 
 namespace ScuolaNoRepo.Controller
 {
-    public class DocenteController {
-        public List<Docente> GetAll() {
-            using var db = new ScuolaContext();
-            return db.Docenti.Include(d => d.Corsi).ToList();
-        }
-        public void AddDocente(Docente docente) {
-            using var db = new ScuolaContext();
-            db.Docenti.Add(docente);
-            db.SaveChanges();
+    public class DocenteController
+    {
+        private readonly IDocenteRepository _docenteRepository;
+
+        public DocenteController()
+        {
+            _docenteRepository = new DocenteRepository();
         }
 
-        public void ModificaDocente(Docente docente) {
-            using var db = new ScuolaContext();
-            db.Docenti.Update(docente);
-            db.SaveChanges();
+        public List<Docente> GetAll()
+        {
+            return _docenteRepository.GetAll();
         }
 
-        public void EliminaDocente(Docente docente) {
-            using var db = new ScuolaContext();
-            db.Docenti.Remove(docente);
-            db.SaveChanges();
+        public void AddDocente(Docente docente)
+        {
+            _docenteRepository.Add(docente);
         }
-        public Docente AggiungiDocenteACorso(int docenteId, int corsoId) {
-            using var db = new ScuolaContext();
-            var docente = db.Docenti.Include(d => d.Corsi).FirstOrDefault(d => d.Id == docenteId);
-            var corso = db.Corsi.FirstOrDefault(c => c.Id == corsoId);
 
-            if (docente != null && corso != null) {
-                docente.Corsi.Add(corso);
-                db.SaveChanges();
-            }
+        public void ModificaDocente(Docente docente)
+        {
+            _docenteRepository.Update(docente);
+        }
 
-            return docente;
+        public void EliminaDocente(Docente docente)
+        {
+            _docenteRepository.Delete(docente);
+        }
+
+        public Docente AggiungiDocenteACorso(int docenteId, int corsoId)
+        {
+            return _docenteRepository.AggiungiDocenteACorso(docenteId, corsoId);
         }
     }
 }

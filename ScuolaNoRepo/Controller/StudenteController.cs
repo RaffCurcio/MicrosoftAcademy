@@ -1,31 +1,37 @@
 using System;
 using System.Collections.Generic;
 using ScuolaNoRepo.Model;
-using ScuolaNoRepo.Data;
+using ScuolaNoRepo.Repositories;
 
 namespace ScuolaNoRepo.Controller
 {
-    public class StudenteController {
-        public List<Studente> GetAll() {
-            using var db = new ScuolaContext();
-            return db.Studenti.ToList();
-        }
-        public void AddStudente(Studente studente) {
-            using var db = new ScuolaContext();
-            db.Studenti.Add(studente);
-            db.SaveChanges();
+    public class StudenteController
+    {
+        private readonly IStudenteRepository _studenteRepository;
+
+        public StudenteController()
+        {
+            _studenteRepository = new StudenteRepository();
         }
 
-        public void ModificaStudente(Studente studente) {
-            using var db = new ScuolaContext();
-            db.Studenti.Update(studente);
-            db.SaveChanges();
+        public List<Studente> GetAll()
+        {
+            return _studenteRepository.GetAll();
         }
 
-        public void EliminaStudente(Studente studente) {
-            using var db = new ScuolaContext();
-            db.Studenti.Remove(studente);
-            db.SaveChanges();
+        public void AddStudente(Studente studente)
+        {
+            _studenteRepository.Add(studente);
+        }
+
+        public void ModificaStudente(Studente studente)
+        {
+            _studenteRepository.Update(studente);
+        }
+
+        public void EliminaStudente(Studente studente)
+        {
+            _studenteRepository.Delete(studente);
         }
     }
 }
