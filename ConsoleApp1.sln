@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsercizioProdotti", "Eserci
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfDemo", "EfDemo\EfDemo.csproj", "{D9BC6292-3D3D-43BE-AA23-B03D2B83ED71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScuolaNoRepo", "ScuolaNoRepo\ScuolaNoRepo.csproj", "{E49F434B-877F-48FA-BFD9-C816B84CA4D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,18 @@ Global
 		{D9BC6292-3D3D-43BE-AA23-B03D2B83ED71}.Release|x64.Build.0 = Release|Any CPU
 		{D9BC6292-3D3D-43BE-AA23-B03D2B83ED71}.Release|x86.ActiveCfg = Release|Any CPU
 		{D9BC6292-3D3D-43BE-AA23-B03D2B83ED71}.Release|x86.Build.0 = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|x64.Build.0 = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|x64.ActiveCfg = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|x64.Build.0 = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{E49F434B-877F-48FA-BFD9-C816B84CA4D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
