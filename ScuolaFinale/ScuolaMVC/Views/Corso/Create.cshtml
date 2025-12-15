@@ -1,0 +1,36 @@
+@model ScuolaMVC.Models.Corso
+
+@{
+    ViewData["Title"] = "Nuovo Corso";
+}
+
+<h2>Nuovo Corso</h2>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Nome" class="form-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CodiceId" class="form-label"></label>
+                <input asp-for="CodiceId" class="form-control" />
+                <span asp-validation-for="CodiceId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Salva</button>
+            <a asp-action="Index" class="btn btn-secondary">Annulla</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
